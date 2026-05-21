@@ -1,1 +1,1 @@
-/Users/korbingillette/RustProjects/Rust_Learning/minigrep/target/debug/minigrep: /Users/korbingillette/RustProjects/Rust_Learning/minigrep/src/main.rs
+/Users/korbingillette/RustProjects/Rust_Learning/minigrep/target/debug/minigrep: /Users/korbingillette/RustProjects/Rust_Learning/minigrep/src/lib.rs /Users/korbingillette/RustProjects/Rust_Learning/minigrep/src/main.rs
