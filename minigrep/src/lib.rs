@@ -22,12 +22,23 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+    // args is mut because iterators consume their iteration
+    // the imple Iterator<Item = String> says the argument type needs to be an Iterator that returns a string at each iteration
+    // lastly the static lifetime for string is so we can return a stack allocated string that will last until the program exits
+    pub fn build(mut args: impl Iterator<Item = String>,) -> Result<Config, &'static str> {
+        // the first arg is the executable so we consume that
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
+
         let ignore_case = env::var("IGNORE_CASE").is_ok();
         Ok(Config { query, file_path, ignore_case })
     }
@@ -61,22 +72,19 @@ Trust me.";
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    // to_lowercase takes ownership so I am shadowing the query
     let query = query.to_lowercase();
-    let mut results = Vec::new();
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line);
-        }
-    }
-    results
+    // we only use to_lowercase inside of the closure because it is mutable at that point
+    // if we used it prior to filter this function would take ownership of contents
+    contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .collect()
 }
