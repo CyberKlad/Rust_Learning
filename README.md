@@ -1,5 +1,5 @@
 ## Rust_Learning
-Korbin's small repo creating while learning the basics of the Rust programming language
+Korbin's small repo created while learning the basics of the Rust programming language
 
 # Projects
 - adder
